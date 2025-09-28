@@ -43,10 +43,11 @@ const Statistics: React.FC = () => {
 
     const memberRanking = useMemo(() => {
         if (!attendances || !allMembers) return [];
-        const attendanceCount = attendances.reduce((acc, curr) => {
+        // FIX: Explicitly type the accumulator in the `reduce` callback to ensure correct type inference.
+        const attendanceCount = attendances.reduce((acc: Record<number, number>, curr) => {
             acc[curr.member_id] = (acc[curr.member_id] || 0) + 1;
             return acc;
-        }, {} as Record<number, number>);
+        }, {});
 
         return Object.entries(attendanceCount)
             .map(([memberId, count]) => {
@@ -65,10 +66,12 @@ const Statistics: React.FC = () => {
 
     const topicStats = useMemo(() => {
         if (!trainingsInRange) return [];
-        const topicCount = trainingsInRange.reduce((acc, curr) => {
+        // FIX: Explicitly type the accumulator in the `reduce` callback. This resolves an issue where 
+        // `acc[curr.thema]` was inferred as 'unknown', causing a type error.
+        const topicCount = trainingsInRange.reduce((acc: Record<string, number>, curr) => {
             acc[curr.thema] = (acc[curr.thema] || 0) + 1;
             return acc;
-        }, {} as Record<string, number>);
+        }, {});
 
         return Object.entries(topicCount)
             // FIX: Add explicit return type to map() to help TypeScript infer the correct type for 'value'.
@@ -78,11 +81,13 @@ const Statistics: React.FC = () => {
     
     const trainerStats = useMemo(() => {
         if (!trainingsInRange || !allTrainers) return [];
-        const trainerCount = trainingsInRange.reduce((acc, curr) => {
+        // FIX: Explicitly type the accumulator in the `reduce` callback. This resolves an issue where 
+        // `acc[curr.trainer1_id]` was inferred as 'unknown', causing a type error.
+        const trainerCount = trainingsInRange.reduce((acc: Record<number, number>, curr) => {
             if (curr.trainer1_id) acc[curr.trainer1_id] = (acc[curr.trainer1_id] || 0) + 1;
             if (curr.trainer2_id) acc[curr.trainer2_id] = (acc[curr.trainer2_id] || 0) + 1;
             return acc;
-        }, {} as Record<number, number>);
+        }, {});
 
         return Object.entries(trainerCount)
             // FIX: Add explicit return type to map() to help TypeScript infer the correct type for 'value'.
